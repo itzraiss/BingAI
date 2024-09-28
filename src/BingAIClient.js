@@ -79,13 +79,13 @@ export default class BingAIClient {
     async createNewConversation() {
         this.headers = {
             accept: 'application/json',
-            'accept-language': 'en-US,en;q=0.9',
+            'accept-language': 'pt-BR,pt;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
             'content-type': 'application/json',
-            'sec-ch-ua': '"Microsoft Edge";v="113", "Chromium";v="113", "Not-A.Brand";v="24"',
+            'sec-ch-ua': '"Microsoft Edge";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
             'sec-ch-ua-arch': '"x86"',
             'sec-ch-ua-bitness': '"64"',
-            'sec-ch-ua-full-version': '"113.0.1774.50"',
-            'sec-ch-ua-full-version-list': '"Microsoft Edge";v="113.0.1774.50", "Chromium";v="113.0.5672.127", "Not-A.Brand";v="24.0.0.0"',
+            'sec-ch-ua-full-version': '"129.0.2792.65"',
+            'sec-ch-ua-full-version-list': '"Microsoft Edge";v="129.0.2792.65", "Not=A?Brand";v="8.0.0.0", "Chromium";v="129.0.6668.71"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-model': '""',
             'sec-ch-ua-platform': '"Windows"',
@@ -93,13 +93,13 @@ export default class BingAIClient {
             'sec-fetch-dest': 'empty',
             'sec-fetch-mode': 'cors',
             'sec-fetch-site': 'same-origin',
-            'sec-ms-gec': genRanHex(64).toUpperCase(),
-            'sec-ms-gec-version': '1-115.0.1866.1',
+            'sec-ms-gec': '5AD3ABDBFCEF0FE6EA77846E8500757406426F66437B66DD1031BA574A3D610A',
+            'sec-ms-gec-version': '1-129.0.2792.65',
             'x-ms-client-request-id': crypto.randomUUID(),
             'x-ms-useragent': 'azsdk-js-api-client-factory/1.0.0-beta.1 core-rest-pipeline/1.10.0 OS/Win32',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.50',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0',
             cookie: this.options.cookies || (this.options.userToken ? `_U=${this.options.userToken}` : undefined),
-            Referer: 'https://www.bing.com/search?q=Bing+AI&showconv=1',
+            Referer: 'https://copilot.microsoft.com/?dpwa=1',
             'Referrer-Policy': 'origin-when-cross-origin',
             // Workaround for request being blocked due to geolocation
             // 'x-forwarded-for': '1.1.1.1', // 1.1.1.1 seems to no longer work.
@@ -107,7 +107,7 @@ export default class BingAIClient {
         };
         // filter undefined values
         this.headers = Object.fromEntries(Object.entries(this.headers).filter(([, value]) => value !== undefined));
-
+    
         const fetchOptions = {
             headers: this.headers,
         };
