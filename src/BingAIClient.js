@@ -79,13 +79,13 @@ export default class BingAIClient {
     async createNewConversation() {
         this.headers = {
             accept: 'application/json',
-            'accept-language': 'pt-BR,pt;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+            'accept-language': 'en-US,en;q=0.9',
             'content-type': 'application/json',
-            'sec-ch-ua': '"Microsoft Edge";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
+            'sec-ch-ua': '"Microsoft Edge";v="129", "Chromium";v="129", "Not=A.Brand";v="8"',
             'sec-ch-ua-arch': '"x86"',
             'sec-ch-ua-bitness': '"64"',
             'sec-ch-ua-full-version': '"129.0.2792.65"',
-            'sec-ch-ua-full-version-list': '"Microsoft Edge";v="129.0.2792.65", "Not=A?Brand";v="8.0.0.0", "Chromium";v="129.0.6668.71"',
+            'sec-ch-ua-full-version-list': '"Microsoft Edge";v="129.0.2792.65", "Chromium";v="129.0.6668.71", "Not=A.Brand";v="8.0.0.0"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-model': '""',
             'sec-ch-ua-platform': '"Windows"',
@@ -99,13 +99,11 @@ export default class BingAIClient {
             'x-ms-useragent': 'azsdk-js-api-client-factory/1.0.0-beta.1 core-rest-pipeline/1.10.0 OS/Win32',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0',
             cookie: this.options.cookies || (this.options.userToken ? `_U=${this.options.userToken}` : undefined),
-            Referer: 'https://copilot.microsoft.com/?dpwa=1',
+            Referer: 'https://www.bing.com/search?q=Bing+AI&showconv=1',
             'Referrer-Policy': 'origin-when-cross-origin',
-            // Workaround for request being blocked due to geolocation
-            // 'x-forwarded-for': '1.1.1.1', // 1.1.1.1 seems to no longer work.
             ...(this.options.xForwardedFor ? { 'x-forwarded-for': this.options.xForwardedFor } : {}),
         };
-        // filter undefined values
+    
         this.headers = Object.fromEntries(Object.entries(this.headers).filter(([, value]) => value !== undefined));
     
         const fetchOptions = {
@@ -116,6 +114,7 @@ export default class BingAIClient {
         } else {
             fetchOptions.dispatcher = new Agent({ connect: { timeout: 20_000 } });
         }
+    
         const response = await fetch(`${this.options.host}/turing/conversation/create?bundleVersion=1.864.15`, fetchOptions);
         const body = await response.text();
         try {
@@ -126,31 +125,31 @@ export default class BingAIClient {
             throw new Error(`/turing/conversation/create: failed to parse response body.\n${body}`);
         }
     }
-
+    
     async createWebSocketConnection(encryptedConversationSignature) {
         return new Promise((resolve, reject) => {
             let agent;
             if (this.options.proxy) {
                 agent = new HttpsProxyAgent(this.options.proxy);
             }
-
+    
             const ws = new WebSocket(`wss://sydney.bing.com/sydney/ChatHub?sec_access_token=${encodeURIComponent(encryptedConversationSignature)}`, { agent, headers: this.headers });
-
+    
             ws.on('error', err => reject(err));
-
+    
             ws.on('open', () => {
                 if (this.debug) {
                     console.debug('performing handshake');
                 }
                 ws.send('{"protocol":"json","version":1}');
             });
-
+    
             ws.on('close', () => {
                 if (this.debug) {
                     console.debug('disconnected');
                 }
             });
-
+    
             ws.on('message', (data) => {
                 const objects = data.toString().split('');
                 const messages = objects.map((object) => {
@@ -167,10 +166,8 @@ export default class BingAIClient {
                     if (this.debug) {
                         console.debug('handshake established');
                     }
-                    // ping
                     ws.bingPingInterval = setInterval(() => {
                         ws.send('{"type":6}');
-                        // same message is sent back on/after 2nd time as a pong
                     }, 15 * 1000);
                     resolve(ws);
                     return;
@@ -181,7 +178,7 @@ export default class BingAIClient {
                 }
             });
         });
-    }
+    }    
 
     static cleanupWebSocketConnection(ws) {
         clearInterval(ws.bingPingInterval);
