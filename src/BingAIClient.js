@@ -93,7 +93,7 @@ export default class BingAIClient {
             'sec-fetch-dest': 'empty',
             'sec-fetch-mode': 'cors',
             'sec-fetch-site': 'same-origin',
-            'sec-ms-gec': '5AD3ABDBFCEF0FE6EA77846E8500757406426F66437B66DD1031BA574A3D610A',
+            'sec-ms-gec': genRanHex(64).toUpperCase(),
             'sec-ms-gec-version': '1-129.0.2792.65',
             'x-ms-client-request-id': crypto.randomUUID(),
             'x-ms-useragent': 'azsdk-js-api-client-factory/1.0.0-beta.1 core-rest-pipeline/1.10.0 OS/Win32',
